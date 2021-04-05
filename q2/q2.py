@@ -29,11 +29,13 @@ def main():
             for arrow in [0, 1, 2, 3]:
                 for mm_state in MMState:
                     for mm_health in MMHealth:
+                        if mm_health == MMHealth.h0:
+                            continue
 
                         possible_actions = {}
 
                         def movementC(new_pos: Position):
-                            return step_cost + 1 * u[new_pos, mat, arrow, mm_state, mm_health] + 0 * u[
+                            return 0.85 * u[new_pos, mat, arrow, mm_state, mm_health] + 0.15 * u[
                                 Position.E, mat, arrow, mm_state, mm_health]
 
                         # movement
@@ -53,7 +55,7 @@ def main():
                                 kill_reward = 50
 
                             possible_actions.update({
-                                Action.SHOOT: step_cost + 0.5 * u[
+                                Action.SHOOT: 0.5 * u[
                                     Position.C, mat, arrow - 1, mm_state, mm_health] + 0.5 * (kill_reward + u[
                                     Position.C, mat, arrow - 1, mm_state, mm_health - 1])
                             })
@@ -65,14 +67,15 @@ def main():
                                 kill_reward = 50
 
                             possible_actions.update({
-                                Action.HIT: step_cost + 0.9 * u[Position.C, mat, arrow, mm_state, mm_health] + 0.1 * (
+                                Action.HIT: 0.9 * u[Position.C, mat, arrow, mm_state, mm_health] + 0.1 * (
                                         kill_reward + u[Position.C, mat, arrow, mm_state, max(0, mm_health - 2)])
                             })
 
-                        values = np.array(possible_actions.values())
+                        values = np.array(list(possible_actions.values()))
+                        actions = np.array(list(possible_actions.keys()))
+                        values = step_cost + gamma * values
                         idx = values.argmax()
-                        u_d[Position.C, mat, arrow, mm_state,
-                            mm_health] = values[idx]
+                        u_d[Position.C, mat, arrow, mm_state, mm_health] = values[idx]
 
                         print(
                             f"({Position.C}, {mat}, {arrow}, {mm_state}, {mm_health}):\
@@ -83,11 +86,13 @@ def main():
             for arrow in [0, 1, 2, 3]:
                 for mm_state in MMState:
                     for mm_health in MMHealth:
+                        if mm_health == MMHealth.h0:
+                            continue
 
                         possible_actions = {}
 
                         def movementN(new_pos: Position):
-                            return step_cost + 1 * u[new_pos, mat, arrow, mm_state, mm_health] + 0 * u[
+                            return 0.85 * u[new_pos, mat, arrow, mm_state, mm_health] + 0.15 * u[
                                 Position.E, mat, arrow, mm_state, mm_health]
 
                         def craft(arrows: int):
@@ -102,16 +107,17 @@ def main():
                         # craft
                         if mat > 0:
                             possible_actions.update({
-                                Action.CRAFT: step_cost + 0.5 * craft(1) + 0.35 * craft(2) + 0.15 * craft(3)
+                                Action.CRAFT: 0.5 * craft(1) + 0.35 * craft(2) + 0.15 * craft(3)
                             })
 
-                        values = np.array(possible_actions.values())
+                        values = np.array(list(possible_actions.values()))
+                        actions = np.array(list(possible_actions.keys()))
+                        values = step_cost + gamma * values
                         idx = values.argmax()
-                        u_d[Position.C, mat, arrow, mm_state,
-                            mm_health] = values[idx]
+                        u_d[Position.N, mat, arrow, mm_state, mm_health] = values[idx]
 
                         print(
-                            f"({Position.C}, {mat}, {arrow}, {mm_state}, {mm_health}):\
+                            f"({Position.N}, {mat}, {arrow}, {mm_state}, {mm_health}):\
                             {list(possible_actions.keys())[int(idx)]}: [{values[idx]}]")
 
         # south square
@@ -119,10 +125,12 @@ def main():
             for arrow in [0, 1, 2, 3]:
                 for mm_state in MMState:
                     for mm_health in MMHealth:
+                        if mm_health == MMHealth.h0:
+                            continue
                         possible_actions = {}
 
                         def movementS(new_pos: Position):
-                            return step_cost + 1 * u[new_pos, mat, arrow, mm_state, mm_health] + 0 * u[
+                            return 0.85 * u[new_pos, mat, arrow, mm_state, mm_health] + 0.15 * u[
                                 Position.E, mat, arrow, mm_state, mm_health]
 
                         def gather(amount: int):
@@ -136,13 +144,14 @@ def main():
 
                         # gather
                         possible_actions.update({
-                            Action.GATHER: step_cost + 0.75 * gather(1) + 0.25 * gather(0)
+                            Action.GATHER: 0.75 * gather(1) + 0.25 * gather(0)
                         })
 
-                        values = np.array(possible_actions.values())
+                        values = np.array(list(possible_actions.values()))
+                        actions = np.array(list(possible_actions.keys()))
+                        values = step_cost + gamma * values
                         idx = values.argmax()
-                        u_d[Position.S, mat, arrow, mm_state,
-                            mm_health] = values[idx]
+                        u_d[Position.S, mat, arrow, mm_state, mm_health] = values[idx]
 
                         print(
                             f"({Position.S}, {mat}, {arrow}, {mm_state}, {mm_health}):\
@@ -153,11 +162,13 @@ def main():
             for arrow in [0, 1, 2, 3]:
                 for mm_state in MMState:
                     for mm_health in MMHealth:
+                        if mm_health == MMHealth.h0:
+                            continue
 
                         possible_actions = {}
 
                         def movementE(new_pos: Position):
-                            return step_cost + u[new_pos, mat, arrow, mm_state, mm_health]
+                            return u[new_pos, mat, arrow, mm_state, mm_health]
 
                         # movement
                         possible_actions.update({
@@ -172,7 +183,7 @@ def main():
                                 kill_reward = 50
 
                             possible_actions.update({
-                                Action.SHOOT: step_cost + 0.1 * u[
+                                Action.SHOOT: 0.1 * u[
                                     Position.C, mat, arrow - 1, mm_state, mm_health] + 0.9 * (kill_reward + u[
                                     Position.C, mat, arrow - 1, mm_state, mm_health - 1])
                             })
@@ -184,14 +195,15 @@ def main():
                                 kill_reward = 50
 
                             possible_actions.update({
-                                Action.HIT: step_cost + 0.8 * u[Position.C, mat, arrow, mm_state, mm_health] + 0.2 * (
+                                Action.HIT: 0.8 * u[Position.C, mat, arrow, mm_state, mm_health] + 0.2 * (
                                         kill_reward + u[Position.C, mat, arrow, mm_state, max(0, mm_health - 2)])
                             })
 
-                        values = np.array(possible_actions.values())
+                        values = np.array(list(possible_actions.values()))
+                        actions = np.array(list(possible_actions.keys()))
+                        values = step_cost + gamma * values
                         idx = values.argmax()
-                        u_d[Position.E, mat, arrow, mm_state,
-                            mm_health] = values[idx]
+                        u_d[Position.E, mat, arrow, mm_state, mm_health] = values[idx]
 
                         print(
                             f"({Position.E}, {mat}, {arrow}, {mm_state}, {mm_health}):\
@@ -202,11 +214,13 @@ def main():
             for arrow in [0, 1, 2, 3]:
                 for mm_state in MMState:
                     for mm_health in MMHealth:
+                        if mm_health == MMHealth.h0:
+                            continue
 
                         possible_actions = {}
 
                         def movementW(new_pos: Position):
-                            return step_cost + u[new_pos, mat, arrow, mm_state, mm_health]
+                            return u[new_pos, mat, arrow, mm_state, mm_health]
 
                         # movement
                         possible_actions.update({
@@ -221,19 +235,23 @@ def main():
                                 kill_reward = 50
 
                             possible_actions.update({
-                                Action.SHOOT: step_cost + 0.75 * u[
+                                Action.SHOOT: 0.75 * u[
                                     Position.C, mat, arrow - 1, mm_state, mm_health] + 0.25 * (kill_reward + u[
                                     Position.C, mat, arrow - 1, mm_state, mm_health - 1])
                             })
 
-                        values = np.array(possible_actions.values())
+                        values = np.array(list(possible_actions.values()))
+                        actions = np.array(list(possible_actions.keys()))
+                        values = step_cost + gamma * values
                         idx = values.argmax()
-                        u_d[Position.W, mat, arrow, mm_state,
-                            mm_health] = values[idx]
+                        u_d[Position.W, mat, arrow, mm_state, mm_health] = values[idx]
 
                         print(
                             f"({Position.W}, {mat}, {arrow}, {mm_state}, {mm_health}):\
                             {list(possible_actions.keys())[int(idx)]}: [{values[idx]}]")
+
+        if np.max(np.abs(u_d[:] - u[:])) < delta:
+            break
 
 
 if __name__ == '__main__':
