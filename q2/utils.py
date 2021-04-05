@@ -28,20 +28,24 @@ class MMState(IntEnum):
 
 
 class MMHealth(IntEnum):
-    _0 = 0
-    _25 = 1
-    _50 = 2
-    _75 = 3
-    _100 = 4
+    h0 = 0
+    h25 = 1
+    h50 = 2
+    h75 = 3
+    h100 = 4
 
 
-# class State:
-#     def __init__(self, pos: Position, mat, arrow, mm_state: MMState, mm_health):
-#         self.pos = pos
-#         self.mat = mat
-#         self.arrow = arrow
-#         self.mm_state = mm_state
-#         self.mm_health = mm_health
-#
-#     def __str__(self):
-#         return f'<{self.pos}, {self.mat}, {self.arrow}, {self.mm_state}, {self.mm_health}>'
+class State:
+    def __init__(self, pos: Position, mat, arrow, mm_state: MMState, mm_health):
+        self.pos = pos
+        self.mat = mat
+        self.arrow = arrow
+        self.mm_state = mm_state
+        self.mm_health = mm_health
+
+    def __str__(self):
+        return f'<{self.pos}, {self.mat}, {self.arrow}, {self.mm_state}, {self.mm_health}>'
+
+    def __iter__(self):
+        for attr in [self.pos, self.mat, self.arrow, self.mm_state, self.mm_health]:
+            yield attr
