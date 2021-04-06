@@ -41,13 +41,13 @@ class MMHealth(IntEnum):
 
 
 class State:
-    def __init__(self, pos: Position, mat, arrow, mm_state: MMState, mm_health):
+    def __init__(self, pos: Position, mat, arrow, mm_state: MMState, mm_health, possible_actions=[]):
         self.pos = pos
         self.mat = mat
         self.arrow = arrow
         self.mm_state = mm_state
         self.mm_health = mm_health
-        self.possible_actions = []
+        self.possible_actions = possible_actions
 
     def __str__(self):
         return f'({self.pos}, {self.mat}, {self.arrow}, {self.mm_state}, {self.mm_health})'
@@ -62,10 +62,12 @@ class State:
     def update(self, **kwargs):
         _dict = self.__dict__
         _dict.update(kwargs)
+        # _dict.pop('possible_actions')
         return _dict
 
     def get_best_action(self, u):
-        utilities = np.array([action.get_utility(u, self) for action in self.possible_actions])
+        utilities = np.array([action.get_utility(u, self)
+                              for action in self.possible_actions])
         idx = utilities.argmax()
         return self.possible_actions[idx]
 
@@ -93,15 +95,15 @@ class Action:
         else:
             for prob, state in self.states:
                 utility += 0.5 * prob * (
-                        gamma * u[State(**state.update(mm_state=MMState.Ready)).index()] + get_kill_reward(state))
+                    gamma * u[State(**state.update(mm_state=MMState.Ready)).index()] + get_kill_reward(state))
 
             if current_state.pos in [Position.C, Position.E]:
                 utility += 0.5 * (gamma * u[State(current_state.pos, current_state.mat, 0, MMState.Dormant,
-                                                  min(4, current_state.mm_health + 1))] - 40)
+                                                  min(4, current_state.mm_health + 1)).index()] - 40)
             else:
                 for prob, state in self.states:
                     utility += 0.5 * prob * (
-                            gamma * u[State(**state.update(mm_state=MMState.Dormant)).index()] + get_kill_reward(state))
+                        gamma * u[State(**state.update(mm_state=MMState.Dormant)).index()] + get_kill_reward(state))
 
         utility += step_cost
         self.utility = utility
