@@ -24,10 +24,11 @@ def main():
         u[:] = u_d[:]
         print(f"iteration={iteration}")
         iteration += 1
-        # Centre square
-        for mat in [0, 1, 2]:
-            for arrow in [0, 1, 2, 3]:
-                for mm_state in MMState:
+        for mm_state in MMState:
+
+            # Centre square
+            for mat in [0, 1, 2]:
+                for arrow in [0, 1, 2, 3]:
                     for mm_health in MMHealth:
                         if mm_health == MMHealth.h0:
                             continue
@@ -75,16 +76,30 @@ def main():
                         actions = np.array(list(possible_actions.keys()))
                         values = step_cost + gamma * values
                         idx = values.argmax()
+
+                        action_name = list(possible_actions.keys())[int(idx)]
+
+                        if mm_state == MMState.Dormant:
+                            # new_u = 0.8 * values[idx] + 0.2 * u[ the state if i take same action with mm_state in ready ]
+                            pass
+
+                        if mm_state == MMState.Ready:
+                            # if center or east
+                            # new_u = 0.5  * values[idx] + 0.5 u[ same_pos, mat, 0, dormant, min(4, mm_health + 1)]
+                            # else
+                            # new_u = 0.5 * values[idx] + 0.5 [ the state if i take same action with mm_state in dormant]
+                            pass
+
+                        # u_d[Position.C, mat, arrow, mm_state, mm_health] = new_u
                         u_d[Position.C, mat, arrow, mm_state, mm_health] = values[idx]
 
                         print(
                             f"({Position.C}, {mat}, {arrow}, {mm_state}, {mm_health}):\
-                            {list(possible_actions.keys())[int(idx)]}: [{values[idx]}]")
+                            {action_name}: [{values[idx]}]")
 
-        # north square
-        for mat in [0, 1, 2]:
-            for arrow in [0, 1, 2, 3]:
-                for mm_state in MMState:
+            # north square
+            for mat in [0, 1, 2]:
+                for arrow in [0, 1, 2, 3]:
                     for mm_health in MMHealth:
                         if mm_health == MMHealth.h0:
                             continue
@@ -120,10 +135,9 @@ def main():
                             f"({Position.N}, {mat}, {arrow}, {mm_state}, {mm_health}):\
                             {list(possible_actions.keys())[int(idx)]}: [{values[idx]}]")
 
-        # south square
-        for mat in [0, 1, 2]:
-            for arrow in [0, 1, 2, 3]:
-                for mm_state in MMState:
+            # south square
+            for mat in [0, 1, 2]:
+                for arrow in [0, 1, 2, 3]:
                     for mm_health in MMHealth:
                         if mm_health == MMHealth.h0:
                             continue
@@ -157,10 +171,9 @@ def main():
                             f"({Position.S}, {mat}, {arrow}, {mm_state}, {mm_health}):\
                             {list(possible_actions.keys())[int(idx)]}: [{values[idx]}]")
 
-        # east square
-        for mat in [0, 1, 2]:
-            for arrow in [0, 1, 2, 3]:
-                for mm_state in MMState:
+            # east square
+            for mat in [0, 1, 2]:
+                for arrow in [0, 1, 2, 3]:
                     for mm_health in MMHealth:
                         if mm_health == MMHealth.h0:
                             continue
@@ -209,10 +222,9 @@ def main():
                             f"({Position.E}, {mat}, {arrow}, {mm_state}, {mm_health}):\
                             {list(possible_actions.keys())[int(idx)]}: [{values[idx]}]")
 
-        # west square
-        for mat in [0, 1, 2]:
-            for arrow in [0, 1, 2, 3]:
-                for mm_state in MMState:
+            # west square
+            for mat in [0, 1, 2]:
+                for arrow in [0, 1, 2, 3]:
                     for mm_health in MMHealth:
                         if mm_health == MMHealth.h0:
                             continue
