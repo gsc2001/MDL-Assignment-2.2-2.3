@@ -8,15 +8,17 @@ from constants import *
 
 # [pos, mat, arrow, mm_state, mm_health]
 
-def log(state: State, action_type, action_utility):
-    print(f"{state} : {action_type} = [ {action_utility} ]")
-
 
 def main():
     u_d = np.ndarray((5, 3, 4, 2, 5), dtype=float)
     u = np.ndarray(u_d.shape, dtype=float)
+    actions = np.ndarray(u_d.shape, dtype=object)
     u_d[:] = 0
     iteration = 0
+
+    def log(state: State, action_type, action_utility):
+        print(f"{state} : {action_type} = [ {action_utility} ]")
+        actions[state.index()] = action_type
 
     while True:
         u[:] = u_d[:]
@@ -83,7 +85,8 @@ def main():
                                 if arrow > 0:
                                     state.possible_actions.extend([
                                         Action(action_type=ActionType.SHOOT, states=[
-                                            (0.5, State(**state.update(arrow=state.arrow - 1))),
+                                            (0.5, State(
+                                                **state.update(arrow=state.arrow - 1))),
                                             (0.5, State(
                                                 **state.update(arrow=state.arrow - 1, mm_health=state.mm_health - 1))),
                                         ]),
@@ -99,7 +102,8 @@ def main():
 
                                 best_action = state.get_best_action(u)
                                 u_d[state.index()] = best_action.utility
-                                log(state, best_action.action_type, best_action.utility)
+                                log(state, best_action.action_type,
+                                    best_action.utility)
 
                             elif pos == Position.N:
                                 state = State(Position.N, mat, arrow,
@@ -132,7 +136,8 @@ def main():
 
                                 best_action = state.get_best_action(u)
                                 u_d[state.index()] = best_action.utility
-                                log(state, best_action.action_type, best_action.utility)
+                                log(state, best_action.action_type,
+                                    best_action.utility)
 
                             elif pos == Position.S:
                                 state = State(Position.S, mat, arrow,
@@ -162,7 +167,8 @@ def main():
 
                                 best_action = state.get_best_action(u)
                                 u_d[state.index()] = best_action.utility
-                                log(state, best_action.action_type, best_action.utility)
+                                log(state, best_action.action_type,
+                                    best_action.utility)
 
                             elif pos == Position.E:
                                 state = State(Position.E, mat, arrow,
@@ -171,7 +177,8 @@ def main():
                                 # movement
                                 state.possible_actions.extend([
                                     Action(action_type=ActionType.LEFT, states=[
-                                        (1, State(**state.update(pos=Position.C))),
+                                        (1, State(
+                                            **state.update(pos=(Position.W if T2C1 else Position.C)))),
                                     ]),
                                     Action(action_type=ActionType.STAY, states=[
                                         (1, State(**state.update(pos=Position.E))),
@@ -182,7 +189,8 @@ def main():
                                 if arrow > 0:
                                     state.possible_actions.extend([
                                         Action(action_type=ActionType.SHOOT, states=[
-                                            (0.1, State(**state.update(arrow=state.arrow - 1))),
+                                            (0.1, State(
+                                                **state.update(arrow=state.arrow - 1))),
                                             (0.9, State(
                                                 **state.update(arrow=state.arrow - 1, mm_health=state.mm_health - 1))),
                                         ]),
@@ -199,7 +207,8 @@ def main():
 
                                 best_action = state.get_best_action(u)
                                 u_d[state.index()] = best_action.utility
-                                log(state, best_action.action_type, best_action.utility)
+                                log(state, best_action.action_type,
+                                    best_action.utility)
 
                             elif pos == Position.W:
                                 state = State(Position.W, mat, arrow,
@@ -219,7 +228,8 @@ def main():
                                 if arrow > 0:
                                     state.possible_actions.extend([
                                         Action(action_type=ActionType.SHOOT, states=[
-                                            (0.75, State(**state.update(arrow=state.arrow - 1))),
+                                            (0.75, State(
+                                                **state.update(arrow=state.arrow - 1))),
                                             (0.25, State(
                                                 **state.update(arrow=state.arrow - 1, mm_health=state.mm_health - 1))),
                                         ]),
@@ -227,7 +237,8 @@ def main():
 
                                 best_action = state.get_best_action(u)
                                 u_d[state.index()] = best_action.utility
-                                log(state, best_action.action_type, best_action.utility)
+                                log(state, best_action.action_type,
+                                    best_action.utility)
 
         if np.max(np.abs(u_d[:] - u[:])) < delta:
             break

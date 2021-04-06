@@ -95,7 +95,7 @@ class Action:
         else:
             for prob, state in self.states:
                 utility += 0.5 * prob * (
-                        gamma * u[State(**state.update(mm_state=MMState.R)).index()] + get_kill_reward(state))
+                    gamma * u[State(**state.update(mm_state=MMState.R)).index()] + get_kill_reward(state))
 
             if current_state.pos in [Position.C, Position.E]:
                 utility += 0.5 * (gamma * u[State(current_state.pos, current_state.mat, 0, MMState.D,
@@ -103,8 +103,12 @@ class Action:
             else:
                 for prob, state in self.states:
                     utility += 0.5 * prob * (
-                            gamma * u[State(**state.update(mm_state=MMState.D)).index()] + get_kill_reward(state))
+                        gamma * u[State(**state.update(mm_state=MMState.D)).index()] + get_kill_reward(state))
 
         utility += step_cost
+
+        if T2C2 and self.action_type == ActionType.STAY:
+            utility -= step_cost
+
         self.utility = utility
         return utility
