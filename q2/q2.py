@@ -16,9 +16,9 @@ def main():
     u_d[:] = 0
     iteration = 0
 
-    def log(state: State, action_type, action_utility):
-        print(f"{state} : {action_type} = [ {action_utility} ]")
-        actions[state.index()] = action_type
+    def log(_state: State, action_type, action_utility):
+        print(f"{_state} : {action_type} = [ {action_utility} ]")
+        actions[_state.index()] = action_type
 
     while True:
         u[:] = u_d[:]
