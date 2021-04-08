@@ -76,6 +76,16 @@
         -   If the he has material and less arrows he goes UP to craft
         -   If he has material and everything to kill MM he goes in E and tries to HIT / SHOOT
 
+    Number of iterations:
+
+        - step cost = -20 -> 124
+        - step cost = -10 -> 117
+        - step cost = -5 ->  114
+
+    If we decrease the value of gamma the number of iterations to converge become less as we dont see future paths.
+
+    If we increase delta the iterations become less as now more difference is accepted
+
 **Q2)**
 
 1. Starting State: (W, 0, 0, D, 100)
@@ -90,7 +100,7 @@
 
     ( E, 0, 0, D, 0 ) : NONE = [ 0 ]
 
-    Explaination:
+    Explanation:
 
     1. In the West square, since IJ doesn't have any arrows, he goes right.
     2. As explained earlier, there is no use of going down or left or hitting from center square. The only advantage of going up is to craft arrows, but since IJ doesn't have any material, he will simply go right.
@@ -106,6 +116,8 @@
     ( N, 1, 1, R, 100 ) : CRAFT = [ -382.308 ] ( assume only 1 arrow crafted)
 
     ( N, 0, 2, R, 100 ) : STAY = [ -381.734 ]
+
+    Explanation:
 
     1. As explained earlier, there is no use of going down or left or hitting from center square. Now, if he stays or goes right, MM can attack him, so he goes up.
     2. Since he has materials, he crafts arrow to attack MM later and avoids getting hit himself by not going down.
