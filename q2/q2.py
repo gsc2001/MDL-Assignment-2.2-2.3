@@ -17,7 +17,7 @@ def main():
     iteration = 0
 
     def log(_state: State, action_type, action_utility):
-        print(f"{_state} : {action_type} = [ {action_utility} ]")
+        print(f"{_state} : {action_type} = [ {np.round(action_utility, decimals=3)} ]")
         actions[_state.index()] = action_type
 
     while True:
