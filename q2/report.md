@@ -118,7 +118,30 @@
 
 There will be no change in the policy as E would never take LEFT action as explained earlier. E is the best state for attacking and the only reason to leave this state is to gather material or craft arrows. But by the time IJ comes back with arrows the step cost would have already gone very high. And also IJ can attack on this state without arrows also using the blade.
 
-### Case 3
+#### Case 2
+
+READY STATE
+
+-   N
+    -   Nearly always tries to stay and wait for MM to change its state to Dormant.
+    -   If he has material and good scope of gaining more arrows (current arrows <= 1), then he will try to craft more arrows unless he has enough to kill MM (assuming every arrow hits).
+-   W
+    -   Always tries to stay and wait for MM to change its state to Dormant.
+-   E
+    -   If IJ doesn't have enough arrows to kill MM, he stays
+    -   If IJ has 1 or 2 arrows and they are enough to kill MM (assumning all of them hit), he shoots
+    -   Since the chances of each arrow to hit are very low for 3 arrows, IJ doesn't shoot even if 3 arrows are enough to kill MM
+-   S
+    -   Always tries to stay and wait for MM to change its state to Dormant.
+-   C
+    -   IJ shoots if there is atleast one arrow available and a single hit can kill MM. Since probability of hitting more than once is low, he doesn't shoot if MM can't be killed with one hit.
+    -   In all other cases, IJ tries to go left because staying at W is safe with 100% chance.
+
+DORMANT STATE
+
+Nearly same as before with a change that now in all squares other than C or E (where MM can attack), IJ chooses to stay a lot as there is no cost in staying wherever he is.
+
+#### Case 3
 
 Now as the gamma has decreased a lot. This affects that IJ will not consider future as much. Therefore he takes the action greedly seeing what is good for him at that state currently
 
@@ -140,6 +163,34 @@ Due to decrease in gamma, VI also converged pretty quickly (in 8 iterations).
         If he has arrows he will go up in 25 as it has high probablity that he will be able to hit. Otherwise he just gathers material as it seems him to the best thing to do while he waits MM to turn dormant
 
     -   C:
+        -   If IJ has arrows and MM can be killed with a single arrow hit, he shoots.
+        -   Otherwise, if MM can be killed with a single hit of blade, IJ hits with a blade.
+        -   As UP, DOWN, LEFT dont give good results in short term. IJ chooses any of them.
 
 -   Dormant
+
     -   N:
+
+        -   He stays if health of MM is high (he dont think he can kill him)
+        -   If its low he goes DOWN to try and kill him
+        -   If he has 2-3 arrows and its able easily kill MM he goes DOWN to try and kill MM
+        -   If the chances of MM killing are less and he has material he just crafts it
+
+    -   W:
+
+        -   As in (N) if the health of MM is low, he tries to go and kill him by going RIGHT as he thinks good to kill MM while he is dormant
+        -   If he has some amount of arrows to kill he shoots.
+
+    -   E:
+
+        -   He does only 2 things here, he shoots if health is 25 and has arrows as prob of arrow hitting is high else he usses the blade to just try to kill him
+
+    -   S:
+
+        -   Same as (N). If health is less he goes to try and kill him while he is in dormant state
+        -   If he doesn't have material he gathers it
+
+    -   C:
+        -   If he has extra arrows than required he shoots
+        -   If he has just required arrows he goes left to E to increase its chances its prob
+        -   He hits if that kill MM.
