@@ -8,7 +8,6 @@ from constants import *
 
 # x [ (), (), (), .... ]
 
-r = []
 
 
 # n_actions = 1936
@@ -25,22 +24,10 @@ r = []
 
 
 def main():
-    u_d = np.ndarray((5, 3, 4, 2, 5), dtype=float)
-    u = np.ndarray(u_d.shape, dtype=float)
-    actions = np.ndarray(u_d.shape, dtype=object)
-    u_d[:] = 0
-    iteration = 0
     a = np.ndarray((600, 1936))
-
-    def log(_state: State, action_type, action_utility):
-        # print(f"{_state} : {action_type} = [ {action_utility} ]")
-        actions[_state.index()] = action_type
-
-    n_actions = 0
-
-    u[:] = u_d[:]
-    print(f"iteration={iteration}")
-    iteration += 1
+    r = np.ndarray((1, 1936))
+    a[:] = 0
+    r[:] = 0
 
     action_index = 0
 
@@ -63,7 +50,7 @@ def main():
                                 state = State(Position.W, mat, arrow, mm_state, mm_health, action_index)
                             state.possible_actions.append(Action(ActionType.NONE, []))
                             action_index += len(state.possible_actions)
-                            state.populate_a(a)
+                            state.populate_a(a, r)
                             continue
 
                         if pos == Position.C:
@@ -112,7 +99,7 @@ def main():
                                 ]),
                             ])
 
-                            state.populate_a(a)
+                            state.populate_a(a, r)
                             action_index += len(state.possible_actions)
 
 
@@ -145,7 +132,7 @@ def main():
                                     ])
                                 ])
 
-                            state.populate_a(a)
+                            state.populate_a(a, r)
                             action_index += len(state.possible_actions)
 
 
@@ -174,9 +161,7 @@ def main():
                                 ])
                             ])
 
-                            n_actions += 3
-
-                            state.populate_a(a)
+                            state.populate_a(a, r)
                             action_index += len(state.possible_actions)
 
                         elif pos == Position.E:
@@ -192,7 +177,6 @@ def main():
                                     (1, State(**state.update(pos=Position.E))),
                                 ]),
                             ])
-                            n_actions += 2
 
                             # shoot
                             if arrow > 0:
@@ -204,7 +188,6 @@ def main():
                                             **state.update(arrow=state.arrow - 1, mm_health=state.mm_health - 1))),
                                     ]),
                                 ])
-                                n_actions += 1
 
                             # hit
                             state.possible_actions.extend([
@@ -214,9 +197,8 @@ def main():
                                     (0.8, State(**state.update())),
                                 ]),
                             ])
-                            n_actions += 1
 
-                            state.populate_a(a)
+                            state.populate_a(a, r)
                             action_index += len(state.possible_actions)
 
                         elif pos == Position.W:
@@ -231,7 +213,6 @@ def main():
                                     (1, State(**state.update(pos=Position.W))),
                                 ]),
                             ])
-                            n_actions += 2
 
                             # shoot
                             if arrow > 0:
@@ -243,13 +224,26 @@ def main():
                                             **state.update(arrow=state.arrow - 1, mm_health=state.mm_health - 1))),
                                     ]),
                                 ])
-                                n_actions += 1
 
-                            state.populate_a(a)
+                            state.populate_a(a, r)
                             action_index += len(state.possible_actions)
 
-    print('\n\n\n\n\n')
-    print(n_actions)
+    # SOLVING for solution
+    alpha = np.ndarray((600, 1))
+    temp_state = State(Position.C, 2, 3, MMState.R, 4)
+    alpha[:] = 0
+    alpha[temp_state.linear_index()] = 1.0
+
+    x = cp.Variable(shape=(1936, 1), name="x")
+
+    constraints = [cp.matmul(a, x) == alpha, x >= 0]
+    objective = cp.Maximize(cp.matmul(r, x))
+    problem = cp.Problem(objective, constraints)
+
+    solution = problem.solve()
+
+    print(solution)
+    np.save('x_value', x.value)
 
 
 if __name__ == '__main__':

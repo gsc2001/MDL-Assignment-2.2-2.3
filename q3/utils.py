@@ -76,14 +76,18 @@ class State:
         idx = utilities.argmax()
         return self.possible_actions[idx]
 
-    def populate_a(self, a):
+    def populate_a(self, a, r):
         # all actions
         for i, action in enumerate(self.possible_actions):
             if action.action_type == ActionType.NONE:
-                a[self.linear_index()][self.action_si + i] += 1
+                a[self.linear_index()][self.action_si + i] = 1
+
+                # DOUBT
+                r[0, self.action_si + i] = 0
                 continue
             for prob, state in action.states:
                 # source
+                r[0, self.action_si + i] = step_cost
                 a[self.linear_index()][self.action_si + i] += prob
                 if self.mm_state == MMState.D:
                     # deposit
@@ -93,6 +97,7 @@ class State:
                     a[State(**state.update(mm_state=MMState.R)).linear_index()][self.action_si + i] -= 0.5 * prob
 
                     if self.pos in [Position.C, Position.E]:
+                        r[0, self.action_si + i] += -0.5 * 40
                         a[State(self.pos, self.mat, 0, MMState.D, min(4, self.mm_health + 1)).linear_index()][
                             self.action_si + i] -= 0.5 * prob
                     else:
