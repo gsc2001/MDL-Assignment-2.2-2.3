@@ -6,5 +6,5 @@
 
 
 ## A matrix
-
+A matrix has columns has possible flows
  
