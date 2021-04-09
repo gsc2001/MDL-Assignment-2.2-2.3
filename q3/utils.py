@@ -64,6 +64,9 @@ class State:
         return self.pos * (3 * 4 * 2 * 5) + self.mat * (4 * 2 * 5) + self.arrow * (2 * 5) + self.mm_state * (
             5) + self.mm_health
 
+    def rep(self):
+        return self.pos.name, self.mat, self.arrow, self.mm_state.name, self.mm_health * 25
+
     def update(self, **kwargs):
         _dict = self.__dict__.copy()
         _dict.update(kwargs)

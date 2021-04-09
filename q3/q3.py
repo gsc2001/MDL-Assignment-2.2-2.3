@@ -1,3 +1,4 @@
+import json
 from typing import List, Dict
 
 import cvxpy as cp
@@ -6,8 +7,8 @@ import numpy as np
 from utils import *
 from constants import *
 
-# x [ (), (), (), .... ]
 
+# x [ (), (), (), .... ]
 
 
 # n_actions = 1936
@@ -28,6 +29,7 @@ def main():
     r = np.ndarray((1, 1936))
     a[:] = 0
     r[:] = 0
+    states = []
 
     action_index = 0
 
@@ -51,6 +53,7 @@ def main():
                             state.possible_actions.append(Action(ActionType.NONE, []))
                             action_index += len(state.possible_actions)
                             state.populate_a(a, r)
+                            states.append(state)
                             continue
 
                         if pos == Position.C:
@@ -101,6 +104,7 @@ def main():
 
                             state.populate_a(a, r)
                             action_index += len(state.possible_actions)
+                            states.append(state)
 
 
                         elif pos == Position.N:
@@ -134,6 +138,7 @@ def main():
 
                             state.populate_a(a, r)
                             action_index += len(state.possible_actions)
+                            states.append(state)
 
 
                         elif pos == Position.S:
@@ -163,6 +168,7 @@ def main():
 
                             state.populate_a(a, r)
                             action_index += len(state.possible_actions)
+                            states.append(state)
 
                         elif pos == Position.E:
                             state = State(Position.E, mat, arrow, mm_state, mm_health, action_index)
@@ -200,6 +206,7 @@ def main():
 
                             state.populate_a(a, r)
                             action_index += len(state.possible_actions)
+                            states.append(state)
 
                         elif pos == Position.W:
                             state = State(Position.W, mat, arrow, mm_state, mm_health, action_index)
@@ -227,6 +234,7 @@ def main():
 
                             state.populate_a(a, r)
                             action_index += len(state.possible_actions)
+                            states.append(state)
 
     # SOLVING for solution
     alpha = np.ndarray((600, 1))
@@ -241,9 +249,28 @@ def main():
     problem = cp.Problem(objective, constraints)
 
     solution = problem.solve()
-
     print(solution)
-    np.save('x_value', x.value)
+
+    x_vec = x.value
+    policy = []
+    for state in states:
+        start = state.action_si
+        end = start + len(state.possible_actions)
+        idx = x_vec[start:end].argmax()
+        action = state.possible_actions[idx]
+        policy.append((state.rep(), str(action.action_type.name)))
+
+    submission = {
+        'a': list(map(list, a)),
+        'r': list(r.flatten()),
+        'alpha': list(alpha.flatten()),
+        'x': list(x_vec.flatten()),
+        'policy': policy,
+        'objective': solution
+
+    }
+    with open('part_3_output.json', 'w') as f:
+        json.dump(submission, f)
 
 
 if __name__ == '__main__':
