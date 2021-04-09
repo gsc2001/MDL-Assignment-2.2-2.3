@@ -158,7 +158,8 @@ def main():
 
                             # gather
                             state.possible_actions.extend([
-                                Action(action_type=ActionType.CRAFT, states=[
+                                # TODO: Generate output again
+                                Action(action_type=ActionType.GATHER, states=[
                                     (0.75, State(
                                         **state.update(mat=min(state.mat + 1, 2)))),
                                     (0.25, State(
