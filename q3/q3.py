@@ -260,6 +260,8 @@ def main():
         action = state.possible_actions[idx]
         policy.append((state.rep(), str(action.action_type.name)))
 
+    print("\n".join(map(str,policy)))
+
     submission = {
         'a': list(map(list, a)),
         'r': list(r.flatten()),
